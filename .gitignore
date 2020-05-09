@@ -13,6 +13,11 @@ Icon
 # data file
 *.pickle*
 *.csv*
+
+# config file
+*config.conf*
+*config.json*
+
 # Thumbnails
 ._*
 
