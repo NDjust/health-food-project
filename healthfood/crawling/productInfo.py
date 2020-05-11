@@ -26,26 +26,19 @@ def search_product(prod_report_num: int, browser: webdriver.chrome) -> webdriver
     try:
 
         # click 신고 번호
-        browser.implicitly_wait(10)
-        wait = WebDriverWait(browser, 10)
-        wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="search_code"]/option[3]'))).click()
+        time.sleep(5)
+        browser.find_element_by_xpath('//*[@id="search_code"]/option[3]').click()
 
         # 신고번호 입
         browser.find_element_by_xpath('//*[@id="search_word"]').send_keys(prod_report_num)
 
         # 제품 검색
         time.sleep(5)
-        wait = WebDriverWait(browser, 10)
-        wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, '//*[@id="wrap"]/main/div[3]/div[1]/div/fieldset/ul/li[3]/a'))).click()
+        browser.find_element_by_xpath('//*[@id="wrap"]/main/div[3]/div[1]/div/fieldset/ul/li[3]/a').click()
 
         # 제품 클릭
         time.sleep(5)
-        wait = WebDriverWait(browser, 10)
-        wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, '//*[@id="wrap"]/main/div[3]/table/tbody/tr/td[2]/a'))).click()
+        browser.find_element_by_xpath('//*[@id="wrap"]/main/div[3]/table/tbody/tr/td[2]/a').click()
 
         return browser
     except WebDriverException as e:
