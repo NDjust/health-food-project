@@ -25,19 +25,29 @@ def search_product(prod_report_num: int, browser: webdriver.chrome) -> webdriver
     """
     try:
         # TODO Click 나올때까지 로딩하는 코드 구현!
+
         # click 신고 번호
         WebDriverWait(browser, 20).until(expected_conditions
                                          .element_to_be_clickable(
             (By.XPATH, '//*[@id="search_code"]/option[3]'))).click()
-        browser.find_element_by_xpath('//*[@id="search_code"]/option[3]').click()
+        click = browser.find_element_by_xpath('//*[@id="search_code"]/option[3]').click()
+        browser.execute_script("arguments[0].click();", click)
+
+        # 신고 번호 입력
         browser.find_element_by_xpath('//*[@id="search_word"]').send_keys(prod_report_num)
+
+        # 검색 버튼 클릭
         WebDriverWait(browser, 20).until(expected_conditions
                 .element_to_be_clickable((By.XPATH, '//*[@id="wrap"]/main/div[3]/div[1]/div/fieldset/ul/li[3]/a'))).click()
-        browser.find_element_by_xpath('//*[@id="wrap"]/main/div[3]/div[1]/div/fieldset/ul/li[3]/a').click()
+        click = browser.find_element_by_xpath('//*[@id="wrap"]/main/div[3]/div[1]/div/fieldset/ul/li[3]/a').click()
+        browser.execute_script("arguments[0].click();", click)
+
+        # 검색 결과 클릭
         WebDriverWait(browser, 20).until(
             expected_conditions
                 .element_to_be_clickable((By.XPATH, '//*[@id="wrap"]/main/div[3]/table/tbody/tr/td[2]'))).click()
-        browser.find_element_by_xpath('//*[@id="wrap"]/main/div[3]/table/tbody/tr/td[2]').click()
+        click = browser.find_element_by_xpath('//*[@id="wrap"]/main/div[3]/table/tbody/tr/td[2]').click()
+        browser.execute_script("arguments[0].click();", click)
         return browser
     except WebDriverException as e:
         print(e)
