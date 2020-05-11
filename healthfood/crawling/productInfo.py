@@ -1,14 +1,14 @@
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from utils import preprocess_materials_info, connect_db, insert_in_db, set_chrome_browser, db_config
 import pymysql
 import time
 import pickle
 
-REPORT_NUMS = pickle.load(open("./report_num.pickle", "rb"))[8307:]
+REPORT_NUMS = pickle.load(open("./report_num.pickle", "rb"))
 print(REPORT_NUMS)
 
 PATH = "/Users/hongnadan/PycharmProjects/DataArchitecture/health-food-project/chromedriver"
@@ -24,29 +24,32 @@ def search_product(prod_report_num: int, browser: webdriver.chrome) -> webdriver
     :return: Chrome Browser or None
     """
     try:
-        # TODO Click 나올때까지 로딩하는 코드 구현!
 
         # click 신고 번호
-        WebDriverWait(browser, 20).until(expected_conditions
-                                         .element_to_be_clickable(
-            (By.XPATH, '//*[@id="search_code"]/option[3]'))).click()
+        browser.implicitly_wait(10)
+        wait = WebDriverWait(browser, 10)
+        wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="search_code"]/option[3]'))).click()
 
-        # 신고 번호 입력
+        # 신고번호 입
         browser.find_element_by_xpath('//*[@id="search_word"]').send_keys(prod_report_num)
 
-        # 검색 버튼 클릭
-        WebDriverWait(browser, 20).until(expected_conditions
-                .element_to_be_clickable((By.XPATH, '//*[@id="wrap"]/main/div[3]/div[1]/div/fieldset/ul/li[3]/a'))).click()
+        # 제품 검색
+        time.sleep(5)
+        wait = WebDriverWait(browser, 10)
+        wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, '//*[@id="wrap"]/main/div[3]/div[1]/div/fieldset/ul/li[3]/a'))).click()
 
-        # 검색 결과 클릭
-        WebDriverWait(browser, 20).until(
-            expected_conditions
-                .element_to_be_clickable((By.XPATH, '//*[@id="wrap"]/main/div[3]/table/tbody/tr/td[2]'))).click()
+        # 제품 클릭
+        time.sleep(5)
+        wait = WebDriverWait(browser, 10)
+        wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, '//*[@id="wrap"]/main/div[3]/table/tbody/tr/td[2]/a'))).click()
 
         return browser
     except WebDriverException as e:
         print(e)
-        return None
 
 
 def get_product_page(prod_report_num: int, browser) -> webdriver.Chrome:
@@ -63,10 +66,10 @@ def get_product_page(prod_report_num: int, browser) -> webdriver.Chrome:
     try:
         print("=====get_product_page======")
         product_page = search_product(prod_report_num, browser)
-        while True:
-            if product_page is not None:
-                break
-            product_page = search_product(prod_report_num, browser)
+        # while True:
+        #     if product_page is not None:
+        #         break
+        #     product_page = search_product(prod_report_num, browser)
 
         return product_page
     except TimeoutError as e:
@@ -107,9 +110,8 @@ def get_product_info(prod_report_num: int, product_page: webdriver.Chrome) -> li
 def save_in_db(conn, cursor, sql: str):
     try:
         for num in REPORT_NUMS:
-            BROWSER = set_chrome_browser(PATH)
+            BROWSER = webdriver.Chrome(PATH)
             BROWSER.get(SITE_URL)
-            BROWSER.implicitly_wait(2)
 
             page = get_product_page(num, BROWSER)
             product_info = get_product_info(num, page)
@@ -124,9 +126,9 @@ def save_in_db(conn, cursor, sql: str):
 
 
 def main():
-    print(REPORT_NUMS[8306])
-    # conn, cursor, sql = db_config()
-    # save_in_db(conn=conn, cursor=cursor, sql=sql)
+    print(REPORT_NUMS)
+    conn, cursor, sql = db_config()
+    save_in_db(conn=conn, cursor=cursor, sql=sql)
 
 
 if __name__ == '__main__':
