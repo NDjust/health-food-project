@@ -110,9 +110,8 @@ def get_product_info(prod_report_num: int, product_page: webdriver.Chrome) -> li
 def save_in_db(conn, cursor, sql: str):
     try:
         for num in REPORT_NUMS:
-            BROWSER = webdriver.Chrome(PATH)
+            BROWSER = set_chrome_browser(PATH)
             BROWSER.get(SITE_URL)
-
             page = get_product_page(num, BROWSER)
             product_info = get_product_info(num, page)
             print(product_info)
