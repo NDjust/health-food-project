@@ -1,11 +1,14 @@
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 from utils import preprocess_materials_info, connect_db, insert_in_db, set_chrome_browser, db_config
 import pymysql
 import time
 import pickle
 
-REPORT_NUMS = pickle.load(open("./report_num.pickle", "rb"))
+REPORT_NUMS = pickle.load(open("./report_num.pickle", "rb"))[8307:]
 print(REPORT_NUMS)
 
 PATH = "/Users/hongnadan/PycharmProjects/DataArchitecture/health-food-project/chromedriver"
@@ -21,12 +24,19 @@ def search_product(prod_report_num: int, browser: webdriver.chrome) -> webdriver
     :return: Chrome Browser or None
     """
     try:
+        # TODO Click 나올때까지 로딩하는 코드 구현!
         # click 신고 번호
+        WebDriverWait(browser, 20).until(expected_conditions
+                                         .element_to_be_clickable(
+            (By.XPATH, '//*[@id="search_code"]/option[3]'))).click()
         browser.find_element_by_xpath('//*[@id="search_code"]/option[3]').click()
         browser.find_element_by_xpath('//*[@id="search_word"]').send_keys(prod_report_num)
-        time.sleep(2)
+        WebDriverWait(browser, 20).until(expected_conditions
+                .element_to_be_clickable((By.XPATH, '//*[@id="wrap"]/main/div[3]/div[1]/div/fieldset/ul/li[3]/a'))).click()
         browser.find_element_by_xpath('//*[@id="wrap"]/main/div[3]/div[1]/div/fieldset/ul/li[3]/a').click()
-        time.sleep(2)
+        WebDriverWait(browser, 20).until(
+            expected_conditions
+                .element_to_be_clickable((By.XPATH, '//*[@id="wrap"]/main/div[3]/table/tbody/tr/td[2]'))).click()
         browser.find_element_by_xpath('//*[@id="wrap"]/main/div[3]/table/tbody/tr/td[2]').click()
         return browser
     except WebDriverException as e:
@@ -109,8 +119,9 @@ def save_in_db(conn, cursor, sql: str):
 
 
 def main():
-    conn, cursor, sql = db_config()
-    save_in_db(conn=conn, cursor=cursor, sql=sql)
+    print(REPORT_NUMS[8306])
+    # conn, cursor, sql = db_config()
+    # save_in_db(conn=conn, cursor=cursor, sql=sql)
 
 
 if __name__ == '__main__':
