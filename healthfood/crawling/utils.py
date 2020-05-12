@@ -57,6 +57,7 @@ def insert_in_db(data: list, conn, cursor, sql):
     :return: None
     """
     print("==========SAVE data==============\n")
+    print(data)
     cursor.execute(sql, tuple([d for d in data]))
     conn.commit()
 
@@ -88,14 +89,15 @@ def db_config():
         db = json_data["db"]
         port = json_data["port"]
         cols = json_data["columns"][1:-1].split(",")
+        table_name = json_data["table_name"]
         conn, cursor = connect_db(host=host, user=user, password=password, db=db, port=port)
-        table_name = "product_info"
         # cols = ['company_name', 'product_name', 'report_num', 'register_date',
         #         'expiry_date', 'properties', 'daily_dose', 'package_type',
         #         'storage_caution', 'warning_info', 'function_content',
         #         'standard_info', 'materials_info']
         values = ("(" + ("%s," * len(cols))[:-1] + ")")
         columns = "(" + ",".join(cols) + ")"
+        print(columns)
         sql = f"insert into {table_name}{columns} values {values}"
 
         return conn, cursor, sql
