@@ -2,6 +2,7 @@ from multiprocessing import Pool
 from utils import db_config, insert_in_db
 import requests
 import pymysql
+import os
 
 # TODO 네트워크를 활용해서 POST, GET 으로 자바 스크립트 데이터 처리
 
@@ -22,7 +23,7 @@ registration_param = {
 
 
 def apply_multiprocessing(func, data, **kwargs) -> list:
-    pool = Pool(processes=4)
+    pool = Pool(processes=os.cpu_count())
     result = pool.map(func, data)
     pool.close()
 
