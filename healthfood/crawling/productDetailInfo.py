@@ -26,7 +26,14 @@ def get_materials_data(product_report_no: int):
     materials_param = {"prdlst_report_no": product_report_no}
     res_json = requests.post(MATERIALS_URL, data=materials_param).json()
     materials = ""
+    print("======Material_Json_Data===========")
+    print(res_json)
+    if res_json is None:
+        return ""
+
     for js in res_json:
+        if "rawmtrl_nm" not in js.keys():
+            continue
         material_name = js["rawmtrl_nm"]
         materials += material_name + "|"
     print(materials)
