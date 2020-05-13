@@ -22,7 +22,7 @@ registration_param = {
 }
 
 
-def apply_multiprocessing(func, data, **kwargs) -> list:
+def apply_multiprocessing(func, data: list, **kwargs) -> list:
     pool = Pool(processes=os.cpu_count())
     result = pool.map(func, data)
     pool.close()
@@ -30,7 +30,7 @@ def apply_multiprocessing(func, data, **kwargs) -> list:
     return result
 
 
-def get_registration_data(start_idx):
+def get_registration_data(start_idx: int) -> list:
     try:
         registration_param["start_idx"] = start_idx
         req = requests.post(REGISTER_URL, data=registration_param)
