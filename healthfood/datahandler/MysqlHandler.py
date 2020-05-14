@@ -15,6 +15,10 @@ class MysqlHandler:
         self.session = None
 
     def __enter__(self) -> object:
+        """ Special Method로 with 구문으로 감싸면 자동으로 실행되는 코드.
+
+        생성된 객체를 데이터베이스에 연결해주는 해줌.
+        """
         try:
             conn = pymysql.connect(host=self.host, user=self.user,
                                    password=self.password, db=self.db,
@@ -30,6 +34,13 @@ class MysqlHandler:
         return self
 
     def mysql_to_df(self, sql: str, save=False, file_path=None) -> pd.DataFrame:
+        """
+
+        :param sql: dataframe으로 만들 sql 쿼리문
+        :param save: 저장 여부
+        :param file_path: 저장할 파일 경로
+        :return: sql 불러온 데이터를 dataframe으로 변환한 결과.
+        """
         if self.session is not None:
             conn = self.session
 
@@ -46,6 +57,11 @@ class MysqlHandler:
             print("DB is Not Connected")
 
     def get_data(self, sql: str) -> list:
+        """ database에 저장된 데이터를 가져오는 코드.
+
+        :param sql: 데이터베이스 sql 쿼리문
+        :return: sql문 결과값.
+        """
         if self.session is not None:
             conn = self.session
 
@@ -59,4 +75,8 @@ class MysqlHandler:
             print("DB is not Connected")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """ __enter__ 함수와 마찬가지로 special method로 with indent 종료시 자동 실행 코드.
+
+        데이터베이스 connect session 종료시킴.
+        """
         self.session.close()
