@@ -1,25 +1,13 @@
 from bs4 import BeautifulSoup
-from multiprocessing import Pool
-from utils import insert_in_db, db_config
+from utils import insert_in_db, db_config, apply_multiprocessing
 import requests
-import os
 import pickle
 import pymysql
-
-# TODO 네트워크를 활용해서 POST, GET 으로 자바 스크립트 데이터 처리
 
 MATERIALS_URL = "http://www.foodsafetykorea.go.kr/portal/healthyfoodlife/searchHfPrdlstRawmtrl.do"
 DETAIL_URL = "http://www.foodsafetykorea.go.kr/portal/healthyfoodlife/searchHomeHFDetail.do"
 
 CONN, CURSOR, SQL = db_config()
-
-
-def apply_multiprocessing(func, data, **kwargs) -> list:
-    pool = Pool(processes=os.cpu_count())
-    result = pool.map(func, data)
-    pool.close()
-
-    return result
 
 
 def get_materials_data(product_report_no: int):
@@ -77,9 +65,5 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# get_product_detail_data(detail_url, params2)
-# get_registration_data(register_url, params)
-
 
 

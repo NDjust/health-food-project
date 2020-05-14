@@ -1,5 +1,21 @@
 from selenium import webdriver
+from multiprocessing import Pool
 import pymysql
+import os
+
+
+def apply_multiprocessing(func, data: list, **kwargs) -> list:
+    """ 파라미터로 입력받은 함수와 데이터를 병렬처리하는 함수
+
+    :param func: 병렬처리할 함수
+    :param data: 병렬처리할 데이터
+    :return: 병렬처리 결과 값
+    """
+    pool = Pool(processes=os.cpu_count())
+    result = pool.map(func, data)
+    pool.close()
+
+    return result
 
 
 def preprocess_materials_info(info: str) -> str:
@@ -79,6 +95,10 @@ def connect_db(host, user, password, db, port):
 
 
 def db_config():
+    """ config.json 파일에 저장된 DB 설정값을 불러와 처리.
+
+    :return: 설정된 데이터 베이스 연결된 pysql connector와 Cursor 그리고 insert sql 쿼리문.
+    """
     import json
     with open("config.json") as js:
         json_data = json.load(js)

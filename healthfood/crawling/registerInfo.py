@@ -1,8 +1,6 @@
-from multiprocessing import Pool
-from utils import db_config, insert_in_db
+from utils import db_config, insert_in_db, apply_multiprocessing
 import requests
 import pymysql
-import os
 
 # TODO 네트워크를 활용해서 POST, GET 으로 자바 스크립트 데이터 처리
 
@@ -11,6 +9,7 @@ DETAIL_URL = "http://www.foodsafetykorea.go.kr/portal/healthyfoodlife/searchHome
 # config DB
 CONN, CURSOR, SQL = db_config()
 
+# Json으로 데이터를 처리하는 request를 처리하는 Parameter
 registration_param = {
     "menu_no": 2823,
     "menu_grp": "MENU_NEW04",
@@ -22,15 +21,12 @@ registration_param = {
 }
 
 
-def apply_multiprocessing(func, data: list, **kwargs) -> list:
-    pool = Pool(processes=os.cpu_count())
-    result = pool.map(func, data)
-    pool.close()
+def save_registration_data(start_idx: int) -> list:
+    """ 제품 등록 데이터 수집 후 저장.
 
-    return result
-
-
-def get_registration_data(start_idx: int) -> list:
+    :param start_idx: 등록정보 페이지 번호
+    :return: 제품 등록정보
+    """
     try:
         registration_param["start_idx"] = start_idx
         req = requests.post(REGISTER_URL, data=registration_param)
@@ -54,8 +50,12 @@ def get_registration_data(start_idx: int) -> list:
 
 
 def main():
+    """ 식품안전나라에 등록된 건강기능식품 데이터 가져와 저장하는 main 함수.
+
+    """
+    # 각 페이지의 인덱스 값.
     start_indexes = [i for i in range(1, 2859)]
-    result = apply_multiprocessing(get_registration_data, start_indexes)
+    result = apply_multiprocessing(save_registration_data, start_indexes)
     CONN.close()
     print(result)
 
