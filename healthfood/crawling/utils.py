@@ -72,10 +72,13 @@ def insert_in_db(data: list, conn, cursor, sql):
     :param sql: sql 쿼리
     :return: None
     """
-    print("==========SAVE data==============\n")
-    print(data)
-    cursor.execute(sql, tuple([d for d in data]))
-    conn.commit()
+    try:
+        print("==========SAVE data==============\n")
+        print(data)
+        cursor.execute(sql, tuple([d for d in data]))
+        conn.commit()
+    except Exception as e:
+        print(e)
 
 
 def connect_db(host, user, password, db, port):
@@ -85,7 +88,7 @@ def connect_db(host, user, password, db, port):
     conn = pymysql.connect(host=host,
                            user=user,
                            password=password,
-                           charset="utf8",
+                           charset="utf8mb4",
                            db=db,
                            port=port)
     print(conn.get_server_info())
@@ -102,7 +105,6 @@ def db_config():
     import json
     with open("config.json") as js:
         json_data = json.load(js)
-        # TODO 병렬처리로 돌릴 것!
         host = json_data["host"]
         user = json_data["user"]
         password = json_data["password"]
@@ -118,6 +120,6 @@ def db_config():
         values = ("(" + ("%s," * len(cols))[:-1] + ")")
         columns = "(" + ",".join(cols) + ")"
         print(columns)
-        sql = f"insert into {table_name}{columns} values {values}"
-
+        sql = f"insert ignore into {table_name}{columns} values {values}"
+        print(sql)
         return conn, cursor, sql

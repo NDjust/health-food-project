@@ -2,8 +2,6 @@ from utils import db_config, insert_in_db, apply_multiprocessing
 import requests
 import pymysql
 
-# TODO 네트워크를 활용해서 POST, GET 으로 자바 스크립트 데이터 처리
-
 REGISTER_URL = 'http://www.foodsafetykorea.go.kr/portal/healthyfoodlife/searchHomeHFProc.do'
 DETAIL_URL = "http://www.foodsafetykorea.go.kr/portal/healthyfoodlife/searchHomeHFDetail.do"
 # config DB
