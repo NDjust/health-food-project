@@ -17,30 +17,30 @@ def download_image():
 
 
 def get_function_ingredients():
-        try:
-            data = []
-            for i in range(1, 34):
-                URL = ""
-                if i < 10:
-                    URL = f"https://www.foodsafetykorea.go.kr/portal/healthyfoodlife/functionalityView0{i}.do?menu_grp=MENU_NEW01&menu_no=2657"
-                else:
-                    URL = f"https://www.foodsafetykorea.go.kr/portal/healthyfoodlife/functionalityView{i}.do?menu_grp=MENU_NEW01&menu_no=2657"
-                print(URL)
-                req = requests.get(URL)
-                soup = BeautifulSoup(req.text, "html.parser")
-                ingredients_tag = soup.find_all("ul", {"class": "health"})
-                function_data = []
-                for ingre in ingredients_tag:
-                    function_data += ingre.text.split("\n")[1:-1]
+    try:
+        data = []
+        for i in range(1, 34):
+            URL = ""
+            if i < 10:
+                URL = f"https://www.foodsafetykorea.go.kr/portal/healthyfoodlife/functionalityView0{i}.do?menu_grp=MENU_NEW01&menu_no=2657"
+            else:
+                URL = f"https://www.foodsafetykorea.go.kr/portal/healthyfoodlife/functionalityView{i}.do?menu_grp=MENU_NEW01&menu_no=2657"
+            print(URL)
+            req = requests.get(URL)
+            soup = BeautifulSoup(req.text, "html.parser")
+            ingredients_tag = soup.find_all("ul", {"class": "health"})
+            function_data = []
+            for ingre in ingredients_tag:
+                function_data += ingre.text.split("\n")[1:-1]
 
-                join = "|".join(function_data)
-                data.append([i, join])
-                pprint(data)
-            df = pandas.DataFrame(data, columns=["category", "ingredients"])
-            df.to_csv("./category_function_data.csv")
-            return data
-        except AttributeError as e:
-            print(e)
+            join = "|".join(function_data)
+            data.append([i, join])
+            pprint(data)
+        df = pandas.DataFrame(data, columns=["category", "ingredients"])
+        df.to_csv("./category_function_data.csv")
+        return data
+    except AttributeError as e:
+        print(e)
 
 
 if __name__ == '__main__':
