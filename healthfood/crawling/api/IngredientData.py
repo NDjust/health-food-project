@@ -49,7 +49,6 @@ def get_function_ingre_data(conn, cursor, sql):
         print(e)
 
 
-# TODO api 데이터 받아오는 거 마무리 및 인코딩 문제 확인.
 def get_each_ingre_data(conn, cursor, sql):
     start_row = 1
     end_row = 315
