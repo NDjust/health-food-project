@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header">
+    <title>Hello HealthFood</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+
+    <div class="jumbotron">
+        <h1>Functional Products</h1>
+        <!--        TODO https://canvasjs.com/spring-mvc-charts/chart-data-from-database/ -->
+        <span th:each="c: ${category}">
+            <span style="display: inline; margin-top: 2px">
+            <a class="btn btn-lg btn-secondary" style="margin-top: 3px" th:href="@{'category/' + ${c.id}}" th:text="${c.category}"></a>
+            </span>
+        </span>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
+
+    <script>
+        var chartLabels = [];
+        var chartData = [];
+
+        $.getJSON("http://localhost:8080/category/chart", function(data){
+            $.each(data, function(inx, obj){
+                chartLabels.push(obj.category);
+                chartData.push(obj.productCount);
+            });
+            createChart();
+            console.log("create Chart")
+
+        });
+
+
+
+        var lineChartData = {
+            labels : chartLabels,
+            datasets : [
+                {
+                    label : "Product Counts",
+                    fillColor : "rbga(151,187,205,0.2)",
+                    strokeColor : "rbga(151,187,205,1)",
+                    pointColor : "rbga(151,187,205,1)",
+                    pointStrokeColor : "#fff",
+                    pointHighlightFill : "#fff",
+                    pointHighlightStroke : "rbga(151,187,205,1)",
+                    data : chartData
+                }
+            ]
+        };
+
+        function createChart(){
+            var ctx = document.getElementById("canvas").getContext("2d");
+            LineChartDemo = new Chart(ctx,{
+                type: 'bar',
+                data : lineChartData,
+                options :{
+                    scales : {
+                        yAxes : [{
+                            ticks :{
+                                beginAtZero : true
+                            }
+                        }]
+                    }
+                }
+            })
+
+        }
+
+
+
+    </script>
+
+    <div style="width:100%">
+        <div>
+            <canvas id="canvas" height="500" width="700"></canvas>
+        </div>
+    </div>
+    <div th:replace="fragments/footer :: footer"></div>
+</div>
+
+
+<!-- /container -->
+
+</body>
+</html>

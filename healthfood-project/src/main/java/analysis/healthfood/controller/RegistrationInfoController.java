@@ -1,6 +1,7 @@
 package analysis.healthfood.controller;
 
-import analysis.healthfood.domain.RegistrationInfo;
+import analysis.healthfood.domain.ProductTotalInfo;
+import analysis.healthfood.service.ProductTotalInfoService;
 import analysis.healthfood.service.RegistrationInfoService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,13 +16,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RegistrationInfoController {
     private final RegistrationInfoService registrationInfoService;
-
+    private final ProductTotalInfoService productTotalInfoService;
 
     @GetMapping(value = "/register_info")
     public String registerInfoList(Model model) {
-        List<RegistrationInfo> allRegistrationInfo = registrationInfoService.getAllRegisterInfo();
-        model.addAttribute("register_info", allRegistrationInfo);
-        return "register-info/register";
+        List<ProductTotalInfo> allRegistrationInfo = productTotalInfoService.getAll();
+
+        model.addAttribute("productInfo", allRegistrationInfo);
+        return "product/register";
     }
 
     @Data

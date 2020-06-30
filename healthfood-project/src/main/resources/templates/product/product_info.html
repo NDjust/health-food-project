@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
+
+<body>
+
+<div style="padding-left: 30px">
+
+    <div class="left-half" style="float: left; width: 50%">
+        <div class="row" >
+
+            <div class="col-4" style="padding-left: 1000px; margin-inside: 0;">
+                <img src="http://placehold.it/190x256" width="100%">
+            </div>
+
+            <div class="col">
+                <h1 class="display-6" th:text="${productInfo.category}"></h1>
+
+                <h1 id="product-name" class="display-6" th:text="${productInfo.productName}"></h1>
+
+                <br>
+
+                <h4>기능성 내용</h4>
+                <h5 th:text="${productInfo.functionContent}"><span class="btn btn-lg btn-secondary">Description</span></h5>
+                <br>
+                <h4>주의사항</h4>
+                <h5 th:text="${productInfo.warningInfo}"><span class="btn btn-lg btn-secondary">Description</span></h5>
+<!--                <h5 th:text="${productInfo.materialsInfo}"><span class="btn btn-lg btn-secondary" th:text="">Description</span></h5>-->
+                <br>
+                <h4>제품 성분</h4>
+                <span th:each="material: ${materials}">
+                    <span th:text="${material + ', '}">
+                    </span>
+                </span>
+
+                <br>
+                <h4>유통기한</h4>
+
+                <h5 th:text="${productInfo.storageCaution}"><span class="btn btn-lg btn-secondary" th:text="">Description</span></h5>
+
+                <br>
+
+                <h4>하루섭취용량</h4>
+
+                <h5 th:text="${productInfo.dailyDose}"><span class="btn btn-lg btn-secondary" th:text="">Description</span></h5>
+
+                <br>
+
+                <h4>용법용량</h4>
+
+                <h5 th:text="${productInfo.properties}"><span class="btn btn-lg btn-secondary" th:text="">Description</span></h5>
+
+                <br>
+                <h4>주의해야할 성분</h4>
+                <span th:each="material: ${warningMaterials}">
+                    <p>
+                        <span th:text="${material.toString()}">
+                        </span>
+                        <span> : </span>
+                        <span th:text="${warningMaterialMap.get(material)}">
+                        </span>
+                    </p>
+                </span>
+                <h5 th:text="${productInfo.materialWarningInfo}"><span class="btn btn-lg btn-secondary" th:text="">Description</span></h5>
+            </div>
+
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
+
+    <script>
+        var chartLabels = [];
+        var chartData = [];
+        var productName = document.getElementById("product-name").textContent;
+        var url = `http://localhost:8080/product/materialChart/${productName}`;
+        console.log(url);
+
+        $.getJSON(url, function(data){
+            $.each(data, function(inx, obj){
+                chartLabels.push(obj.warningOrNotWarning);
+                chartData.push(obj.eachCount);
+            });
+            createChart();
+            console.log("create Chart")
+
+        });
+
+
+
+        var lineChartData = {
+            labels : chartLabels,
+            datasets : [
+                {
+                    label : "material Counts",
+                    backgroundColor: ["#3e95cd", "#8e5ea2"],
+                    data : chartData
+                }
+            ]
+        };
+
+        function createChart(){
+            var ctx = document.getElementById("canvas").getContext("2d");
+            LineChartDemo = new Chart(ctx,{
+                type: 'doughnut',
+                data : lineChartData,
+                options :{
+                    title: {
+                        display: true,
+                        text: "안전 / 위험 성분 비율."
+                    }
+                }
+            })
+
+        }
+
+
+
+    </script>
+
+    <div class="right-half" style="width:50%; float: left; padding-top: 70px">
+        <div>
+            <canvas id="canvas" height="200" width="400"></canvas>
+        </div>
+    </div>
+
+</div> <!-- /container -->
+</body>
+</html>

@@ -19,8 +19,7 @@ public class RegistrationInfoService {
 
     public List<RegistrationInfo> getAllRegisterInfo() {
         try {
-            List<RegistrationInfo> allRegistrationInfo = registrationInfoRepository.findAllRegisterInfo();
-            return allRegistrationInfo;
+            return registrationInfoRepository.findAllRegisterInfo();
         } catch (Exception e) {
             e.printStackTrace();
             return null;

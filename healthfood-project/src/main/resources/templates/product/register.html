@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
+
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+    <div>
+        <table class="table table-striped"> <thead>
+        <tr>
+            <th>상품명</th>
+            <th>카테고리</th>
+            <th>보관방법</th>
+            <th>기능내용</th>
+            <th>주의사항</th>
+        </tr>
+        </thead>
+            <tbody>
+            <tr th:each="info: ${productInfo}">
+                <td th:text="${info.productName}"></td>
+                <td th:text="${info.category}"></td>
+                <td th:text="${info.storageCaution}"></td>
+                <td th:text="${info.functionContent}"></td>
+                <td th:text="${info.warningInfo}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="fragments/footer :: footer"></div>
+</div> <!-- /container -->
+</body>
+</html>
